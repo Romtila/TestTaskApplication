@@ -1,15 +1,9 @@
-using System.Runtime.Serialization;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
-using TestTaskApplication.API.Helpers;
-using TestTaskApplication.API.Models;
 using TestTaskApplication.Application.IServices;
-using TestTaskApplication.Core.Exceptions;
 
 namespace TestTaskApplication.API.Controllers;
 
-/// <summary>
-/// Represents tree node API
-/// </summary>
 [ApiController]
 [Route("tree/[controller]")]
 public class NodeController : ControllerBase
@@ -22,30 +16,41 @@ public class NodeController : ControllerBase
     }
 
     /// <summary>
-    /// Create a new node in your tree. You must to specify a parent node ID that belongs to your tree. A new node name must be unique across all siblings.
     /// </summary>
+    /// <remarks>Create a new node in your tree. You must to specify a parent node ID that belongs to your tree. A new node name must be unique across all siblings.</remarks>
     /// <param name="treeName"></param>
     /// <param name="parentNodeId"></param>
     /// <param name="nodeName"></param>
     /// <returns></returns>
     [HttpPost("create")]
-    public async Task<IActionResult> Create(string treeName, long parentNodeId, string nodeName)
+    public async Task<IActionResult> Create([Required]string treeName, [Required]long parentNodeId, [Required]string nodeName)
     {
         await _nodeService.CreateNode(treeName, parentNodeId, nodeName);
         return Ok();
     }
 
-    //[EndpointName("Delete an existing node in your tree. You must specify a node ID that belongs your tree.")]
+    /// <summary>
+    /// </summary>
+    /// <remarks>Delete an existing node in your tree. You must specify a node ID that belongs your tree. </remarks>
+    /// <param name="treeName"></param>
+    /// <param name="nodeId"></param>
+    /// <returns></returns>
     [HttpDelete("delete")]
-    public async Task<IActionResult> Delete(string treeName, long nodeId)
+    public async Task<IActionResult> Delete([Required]string treeName, [Required]long nodeId)
     {
         await _nodeService.DeleteNode(treeName, nodeId);
         return Ok();
     }
 
-    //[EndpointName("Rename an existing node in your tree. You must specify a node ID that belongs your tree. A new name of the node must be unique across all siblings.")]
+    /// <summary>
+    /// </summary>
+    /// <remarks>Rename an existing node in your tree. You must specify a node ID that belongs your tree. A new name of the node must be unique across all siblings.</remarks>
+    /// <param name="treeName"></param>
+    /// <param name="nodeId"></param>
+    /// <param name="newNodeName"></param>
+    /// <returns></returns>
     [HttpPut("rename")]
-    public async Task<IActionResult> RenameNode(string treeName, long nodeId, string newNodeName)
+    public async Task<IActionResult> RenameNode([Required]string treeName, [Required]long nodeId, [Required]string newNodeName)
     {
         await _nodeService.RenameNode(treeName, nodeId, newNodeName);
         return Ok();

@@ -1,11 +1,11 @@
-using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using TestTaskApplication.Application.IServices;
+using TestTaskApplication.Core.Entities;
 
 namespace TestTaskApplication.API.Controllers;
 
 [ApiController]
-[Description("Represents entire tree API")]
 [Route("[controller]")]
 public class TreeController : ControllerBase
 {
@@ -16,15 +16,14 @@ public class TreeController : ControllerBase
         _nodeService = nodeService;
     }
 
-    //[EndpointName("Create a new node in your tree. You must to specify a parent node ID that belongs to your tree. A new node name must be unique across all siblings.")]
     /// <summary>
-    /// aaaaa 
-    /// <remarks>Awesomeness!</remarks>
     /// </summary>
+    /// <remarks>Returns your entire tree. If your tree doesn't exist it will be created automatically.</remarks>
     /// <param name="treeName"></param>
     /// <returns></returns>
     [HttpGet("get")]
-    public async Task<IActionResult> GetTree(string treeName)
+    [ProducesResponseType(typeof(Node), 200)]
+    public async Task<IActionResult> GetTree([Required]string treeName)
     {
         var node = await _nodeService.GetTreeByName(treeName);
         return Ok(node);

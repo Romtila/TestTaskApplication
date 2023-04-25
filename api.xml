@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TestTaskApplication.API</name>
+    </assembly>
+    <members>
+        <member name="T:TestTaskApplication.API.Controllers.NodeController">
+            <summary>
+            Represents tree node API
+            </summary>
+        </member>
+        <member name="M:TestTaskApplication.API.Controllers.NodeController.Create(System.String,System.Int64,System.String)">
+            <summary>
+            Create a new node in your tree. You must to specify a parent node ID that belongs to your tree. A new node name must be unique across all siblings.
+            </summary>
+            <param name="treeName"></param>
+            <param name="parentNodeId"></param>
+            <param name="nodeName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TestTaskApplication.API.Controllers.TreeController.GetTree(System.String)">
+            <summary>
+            aaaaa 
+            <remarks>Awesomeness!</remarks>
+            </summary>
+            <param name="treeName"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

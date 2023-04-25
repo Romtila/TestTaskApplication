@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using TestTaskApplication.API.DIExtensions;
@@ -23,9 +24,14 @@ builder.Services.AddSwaggerGen(options =>
         new OpenApiInfo
         {
             Title = "Swagger",
-            Version = "v1"
+            Version = "v1",
+            Description = "Test task"
         }
     );
+
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    options.IncludeXmlComments(xmlPath);
 });
 
 var app = builder.Build();
