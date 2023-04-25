@@ -1,6 +1,7 @@
 using System.Reflection;
 using Mapster;
 using MapsterMapper;
+using TestTaskApplication.API.Middleware;
 using TestTaskApplication.Application.IServices;
 using TestTaskApplication.Application.Services;
 using TestTaskApplication.Core.Interfaces;
@@ -30,5 +31,10 @@ public static class DiExtension
 
         services.AddSingleton(config);
         services.AddScoped<IMapper, ServiceMapper>();
+    }
+    
+    public static void ConfigureCustomExceptionMiddleware(this WebApplication app) 
+    { 
+        app.UseMiddleware<ExceptionMiddleware>(); 
     }
 }
