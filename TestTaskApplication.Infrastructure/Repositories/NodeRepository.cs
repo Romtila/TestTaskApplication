@@ -1,4 +1,7 @@
+using Dapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Npgsql;
 using TestTaskApplication.Core.Entities;
 using TestTaskApplication.Core.Exceptions;
 using TestTaskApplication.Core.Interfaces;
@@ -8,23 +11,27 @@ namespace TestTaskApplication.Infrastructure.Repositories;
 
 public class NodeRepository : BaseRepository<Node>, INodeRepository
 {
-    public NodeRepository(ApplicationContext dbContext) : base(dbContext)
+    private string? _connectionString;
+
+    public NodeRepository(ApplicationContext dbContext, IConfiguration configuration) : base(dbContext)
     {
+        _connectionString = configuration.GetConnectionString("ConnectionString");
     }
 
     public async Task<List<Node>> GetTreeNodesByNameAsync(string treeName)
     {
-        var nodes = await DbContext.Database
-            .SqlQuery<Node>(@$"WITH RECURSIVE r (Id, ParentId, Name, TreeName, level) AS
-                        (SELECT ""Id"", ""ParentId"", ""Name"", ""TreeName"", 1
+        var query = @$"WITH RECURSIVE NodeSql (Id, ParentId, Name, TreeName) AS
+                        (SELECT ""Id"", ""ParentId"", ""Name"", ""TreeName""
                         FROM ""Nodes"" 
                         WHERE ""Id"" = (SELECT ""Id"" FROM ""Nodes"" tn WHERE tn.""TreeName"" = '{treeName}' Order By tn.""Id"" LIMIT 1) 
                         UNION ALL
-                        SELECT t.""Id"", t.""ParentId"", t.""Name"", t.""TreeName"", r.level + 1
-                        FROM r INNER JOIN ""Nodes"" t
-                        ON r.Id = t.""ParentId"")
-                        SELECT r.Id, r.TreeName, r.Name, r.ParentId FROM r")
-            .ToListAsync();
+                        SELECT t.""Id"", t.""ParentId"", t.""Name"", t.""TreeName""
+                        FROM NodeSql INNER JOIN ""Nodes"" t
+                        ON NodeSql.Id = t.""ParentId"")
+                        SELECT * FROM NodeSql";
+
+        await using var db = new NpgsqlConnection(_connectionString);
+        var nodes = db.Query<Node>(query).AsList();
 
         if (nodes.Count == 0)
             throw new SecureException($"Node does not exist with trees name: {treeName}");
@@ -34,17 +41,18 @@ public class NodeRepository : BaseRepository<Node>, INodeRepository
 
     public async Task<List<Node>> GetTreeNodesByNodeIdAsync(long nodeId)
     {
-        var nodes = await DbContext.Database
-            .SqlQuery<Node>(@$"WITH RECURSIVE r (Id, ParentId, Name, TreeName, level) AS
-                        (SELECT ""Id"", ""ParentId"", ""Name"", ""TreeName"", 1
+        var query = @$"WITH RECURSIVE NodeSql (Id, ParentId, Name, TreeName) AS
+                        (SELECT ""Id"", ""ParentId"", ""Name"", ""TreeName""
                         FROM ""Nodes"" 
                         WHERE ""Id"" = {nodeId}
                         UNION ALL
-                        SELECT t.""Id"", t.""ParentId"", t.""Name"", t.""TreeName"", r.level + 1
-                        FROM r INNER JOIN ""Nodes"" t
-                        ON r.Id = t.""ParentId"")
-                        SELECT r.Id, r.TreeName, r.Name, r.ParentId FROM r")
-            .ToListAsync();
+                        SELECT t.""Id"", t.""ParentId"", t.""Name"", t.""TreeName""
+                        FROM NodeSql INNER JOIN ""Nodes"" t
+                        ON NodeSql.Id = t.""ParentId"")
+                        SELECT * FROM NodeSql";
+
+        await using var db = new NpgsqlConnection(_connectionString);
+        var nodes = db.Query<Node>(query).AsList();
 
         if (nodes.Count == 0)
             throw new SecureException($"Node does not exist with id: {nodeId}");

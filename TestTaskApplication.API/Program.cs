@@ -11,7 +11,7 @@ var configuration = builder.Configuration;
 builder.Services.AddDbContext<ApplicationContext>(options =>
     options.UseNpgsql(configuration.GetConnectionString("ConnectionString")));
 
-//builder.Services.AddMappings();
+builder.Services.AddMappings();
 
 builder.Services.AddCustomServices();
 builder.Services.AddRepositories();

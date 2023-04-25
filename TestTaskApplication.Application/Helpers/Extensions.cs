@@ -1,20 +1,20 @@
-using TestTaskApplication.Core.Entities;
+using TestTaskApplication.Application.Models;
 
 namespace TestTaskApplication.Application.Helpers;
 
 public static class Extensions
 {
-    public static Node BuildTree(this List<Node> nodes)
+    public static NodeReadModel BuildTree(this List<NodeReadModel> nodes)
     {
         if (nodes == null)
         {
             throw new ArgumentNullException(nameof(nodes));
         }
 
-        return new Node().BuildTree(nodes);
+        return nodes[0].BuildTree(nodes);
     }
 
-    private static Node BuildTree(this Node root, List<Node> nodes)
+    private static NodeReadModel BuildTree(this NodeReadModel root, List<NodeReadModel> nodes)
     {
         if (nodes.Count == 0)
         {
@@ -37,15 +37,17 @@ public static class Extensions
         return root;
     }
 
-    public static IEnumerable<Node> FetchChildren(this Node root, IEnumerable<Node> nodes)
+    public static IEnumerable<NodeReadModel> FetchChildren(this NodeReadModel root, IEnumerable<NodeReadModel> nodes)
     {
-        return nodes.Where(n => n.ParentId == root.Id);
+        return root.Id == 0
+            ? nodes.Where(n => n.ParentId == null)
+            : nodes.Where(n => n.ParentId == root.Id);
     }
 
-    public static void RemoveChildren(this Node root, List<Node> nodes)
+    public static void RemoveChildren(this NodeReadModel root, List<NodeReadModel> nodes)
     {
         if (root.Children == null) return;
-        
+
         foreach (var node in root.Children)
         {
             nodes.Remove(node);

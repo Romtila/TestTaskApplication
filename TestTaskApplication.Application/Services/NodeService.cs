@@ -1,5 +1,8 @@
+using Mapster;
+using MapsterMapper;
 using TestTaskApplication.Application.Helpers;
 using TestTaskApplication.Application.IServices;
+using TestTaskApplication.Application.Models;
 using TestTaskApplication.Core.Entities;
 using TestTaskApplication.Core.Exceptions;
 using TestTaskApplication.Core.Interfaces;
@@ -9,16 +12,19 @@ namespace TestTaskApplication.Application.Services;
 public class NodeService : INodeService
 {
     private readonly INodeRepository _nodeRepository;
+    private readonly IMapper _mapper;
 
-    public NodeService(INodeRepository nodeRepository)
+    public NodeService(INodeRepository nodeRepository, IMapper mapper)
     {
         _nodeRepository = nodeRepository;
+        _mapper = mapper;
     }
 
-    public async Task<Node> GetTreeByName(string treeName)
+    public async Task<NodeReadModel> GetTreeByName(string treeName)
     {
         var nodes = await _nodeRepository.GetTreeNodesByNameAsync(treeName);
-        return nodes.BuildTree();
+        var tree = _mapper.Map<List<NodeReadModel>>(nodes);
+        return tree.BuildTree();
     }
 
     public async Task CreateNode(string treeName, long parentNodeId, string nodeName)

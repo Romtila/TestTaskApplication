@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TestTaskApplication.Core.Entities;
+using TestTaskApplication.Infrastructure.Configurations;
 
 namespace TestTaskApplication.Infrastructure.Data;
 
@@ -9,10 +10,11 @@ public class ApplicationContext : DbContext
     {
     }
 
-    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.ConfigureConventions(configurationBuilder);
-        configurationBuilder.DefaultTypeMapping<Node>();
+        modelBuilder.ApplyConfiguration(new NodeConfiguration());
+
+        base.OnModelCreating(modelBuilder);
     }
 
     public DbSet<Journal> Journals { get; set; }

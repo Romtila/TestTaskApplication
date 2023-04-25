@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using TestTaskApplication.Application.IServices;
-using TestTaskApplication.Core.Entities;
+using TestTaskApplication.Application.Models;
 
 namespace TestTaskApplication.API.Controllers;
 
@@ -22,7 +22,7 @@ public class TreeController : ControllerBase
     /// <param name="treeName"></param>
     /// <returns></returns>
     [HttpGet("get")]
-    [ProducesResponseType(typeof(Node), 200)]
+    [ProducesResponseType(typeof(NodeReadModel), 200)]
     public async Task<IActionResult> GetTree([Required]string treeName)
     {
         var node = await _nodeService.GetTreeByName(treeName);

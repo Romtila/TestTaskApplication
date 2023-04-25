@@ -1,3 +1,4 @@
+using TestTaskApplication.Application.Models;
 using TestTaskApplication.Core.Entities;
 
 namespace TestTaskApplication.Application.IServices;
@@ -9,7 +10,7 @@ public interface INodeService
     /// </summary>
     /// <param name="treeName">Tree's name</param>
     /// <returns></returns>
-    Task<Node> GetTreeByName(string treeName);
+    Task<NodeReadModel> GetTreeByName(string treeName);
 
     /// <summary>
     /// Create a new node in your tree. You must to specify a parent node ID that belongs to your tree. A new node name must be unique across all siblings.
